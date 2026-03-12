@@ -1,7 +1,10 @@
 "use client";
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
+import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/supabase-js";
+
 const ImageUploader = () => {
   const [file, setFile] = useState<string | null>(null);
   const [base64File, setBase64File] = useState<string | null>(null);
@@ -9,6 +12,21 @@ const ImageUploader = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [resultImage, setResultImage] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
+  const router = useRouter();
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+      setIsCheckingAuth(false);
+    };
+    checkAuth();
+  }, []);
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const uploadedImage = e.target.files?.[0];
     if (!uploadedImage) {
@@ -52,6 +70,48 @@ const ImageUploader = () => {
       setLoading(false);
     }
   }
+  // Show loading spinner while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center py-12">
+        <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
+        <p className="mt-4 text-gray-600 dark:text-gray-300 text-center">
+          Checking authentication...
+        </p>
+      </div>
+    );
+  }
+
+  // Show login prompt if user is not authenticated
+  if (!user) {
+    return (
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Please Log In to Upload Images
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You need to be logged in to use the image upload and processing features.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => router.push("/login")}
+              className="bg-[#4CAF50] hover:bg-[#45a049] text-white px-8 py-3 rounded-md font-semibold transition-colors duration-200 shadow-md"
+            >
+              Log In
+            </button>
+            <button
+              onClick={() => router.push("/signup")}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-md font-semibold transition-colors duration-200 shadow-md"
+            >
+              Sign Up
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Error Message */}
