@@ -2,9 +2,12 @@
 import { createClient } from "@/utils/supabase/client";
 import React, { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
+import { Sparkles } from "lucide-react";
+
 const UserGreetText = () => {
-  const [user, setUser] = useState<User|null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const supabase = createClient();
+
   useEffect(() => {
     const fetchUser = async () => {
       const {
@@ -14,18 +17,28 @@ const UserGreetText = () => {
     };
     fetchUser();
   }, []);
+
   if (user !== null) {
     return (
-      <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-        hello&nbsp;
-        <code className="font-mono font-bold">{user.user_metadata.full_name ?? "user"}!</code>
-      </p>
+      <div className="flex items-center gap-3 bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-purple-500/10 dark:from-emerald-400/5 dark:via-blue-400/5 dark:to-purple-400/5 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20 dark:border-white/10 shadow-lg">
+        <Sparkles className="h-5 w-5 text-emerald-500 animate-pulse" />
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          Welcome back,&nbsp;
+          <span className="font-semibold text-slate-900 dark:text-white">
+            {user.user_metadata.full_name ?? "User"}
+          </span>
+        </span>
+      </div>
     );
   }
+
   return (
-    <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-      Get your dream house&nbsp;
-    </p>
+    <div className="flex items-center gap-3 bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-purple-500/10 dark:from-emerald-400/5 dark:via-blue-400/5 dark:to-purple-400/5 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20 dark:border-white/10 shadow-lg">
+      <Sparkles className="h-5 w-5 text-emerald-500 animate-pulse" />
+      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+        Get your dream house with AI-powered architecture
+      </span>
+    </div>
   );
 };
 
