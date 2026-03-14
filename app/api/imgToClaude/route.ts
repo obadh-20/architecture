@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         provider: "auto",
       });
 
-      const arrayBuffer = await (imageBlob as Blob).arrayBuffer();
+      const arrayBuffer = await(imageBlob as unknown as Blob).arrayBuffer();
       const base64Image = Buffer.from(arrayBuffer).toString("base64");
       return NextResponse.json({ image: base64Image }, { status: 200 });
     } catch (error) {
